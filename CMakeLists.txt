@@ -31,7 +31,10 @@ endif()
 #                ${APPSDK_PATH}/lib/hbbpu
 #                ${APPSDK_PATH}/lib)
 
-#find_package(G2O REQUIRED)
+set(CMAKE_MODULE_PATH "/home/wunuo/g2o/g2o/cmake_modules" ${CMAKE_MODULE_PATH})
+
+find_package(G2O REQUIRED)
+#find_package(g2o REQUIRED)
 find_package(OpenCV REQUIRED)
 find_package(Eigen3 REQUIRED)
 find_package(ament_cmake REQUIRED)
@@ -48,29 +51,16 @@ find_package(image_transport REQUIRED)
 #find_package(eigen_conversions REQUIRED)
 #find_package(message_generation REQUIRED)
 find_package(Boost REQUIRED)
+#find_package(glog REQUIRED)
 
+#set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} /home/wunuo/g2o/g2o/cmake_modules)
 
 add_definitions(-DROOT_DIR=\"${CMAKE_CURRENT_SOURCE_DIR}/\")
 
-add_executable(main_eskf src/apps/main_eskf.cpp)
-
-target_link_libraries(main_eskf ${OpenCV_LIBS} ${Boost_LIBRARIES} Eigen3::Eigen)
-
-ament_target_dependencies(main_eskf
-  rclcpp
-  rclpy
-  std_msgs
-  geometry_msgs
-  nav_msgs
-  sensor_msgs
-  rosbag2_cpp 
-  cv_bridge
-  image_transport
-  #eigen_conversions
-  #message_generation
-)
+#target_link_libraries(main_eskf ${OpenCV_LIBS} ${Boost_LIBRARIES} glog gflags Eigen3::Eigen3 )
 
 
+ament_export_dependencies(${OpenCV_LIBS} ${Boost_LIBRARIES} glog gflags Eigen3::Eigen3 rclcpp nav_msgs cv_bridge g2o)
 
 include_directories(
   include
@@ -79,6 +69,7 @@ include_directories(
   /usr/include/pcl-1.10
   /usr/include/vtk-7.1
 )
+
 include_directories(${PROJECT_SOURCE_DIR})
 include_directories(${PROJECT_SOURCE_DIR}/src)
 #include_directories(${PROJECT_SOURCE_DIR}/thirdparty/sophus)
@@ -86,12 +77,15 @@ include_directories(${PROJECT_SOURCE_DIR}/thirdparty/onnxruntime-linux-x64-1.9.0
 include_directories(${PROJECT_SOURCE_DIR}/thirdparty/tessil-src/include)
 include_directories(${PROJECT_SOURCE_DIR}/thirdparty ${Boost_INCLUDE_DIRS})
 
+
 include_directories(SYSTEM ${G2O_INCLUDE_DIR} ${G2O_INCLUDE_DIRS} /usr/include/opencv4)
 
-link_directories(${G2O_LIBRARY_DIRS})
+link_directories(${PROJECT_SOURCE_DIR}/thirdparty/onnxruntime-linux-x64-1.9.0/lib)
+link_directories(${G2O_LIBRARIES})
 link_directories(${OpenCV_LIBRARY_DIRS})
 link_directories(${catkin_LIBRARY_DIRS})
-link_directories(${PROJECT_SOURCE_DIR}/thirdparty/onnxruntime-linux-x64-1.9.0/lib)
+
+
 
 find_library(BOOST_SERIALIZATION boost_serialization)
 if (NOT BOOST_SERIALIZATION)
@@ -100,6 +94,4 @@ endif()
 link_directories(${BOOST_SERIALIZATION})
 
 add_subdirectory(src)
-
-
 

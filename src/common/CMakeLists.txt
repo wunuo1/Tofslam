@@ -11,4 +11,3 @@ add_library(${PROJECT_NAME}.common
 target_link_libraries(${PROJECT_NAME}.common
         ${third_party_libs}
         )
-

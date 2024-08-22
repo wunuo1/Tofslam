@@ -26,11 +26,10 @@ target_link_libraries(${PROJECT_NAME}.loop
         ${G2O_SOLVER_CSPARSE}
         ${G2O_SOLVER_CHOLMOD}
         ${G2O_TYPES_SLAM3D}
-        ${G2O_TYPES_SLAM3D_ADDONS}
+        /usr/local/lib/libg2o_types_slam3d_addons.so
         ${catkin_LIBRARIES}
         ${PCL_LIBRARIES}
         ${BOOST_SERIALIZATION}
         ${PROJECT_NAME}.ndt
         ${PROJECT_NAME}.fgicp
         )
-

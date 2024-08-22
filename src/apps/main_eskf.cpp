@@ -19,7 +19,6 @@
 #include <nav_msgs/msg/path.hpp>
 #include <tf2/transform_datatypes.h>
 #include <tf2/LinearMath/Transform.h>
-#include <tf2/LinearMath/Stamped.h>
 #include <tf2/LinearMath/Vector3.h>
 #include <tf2/LinearMath/Quaternion.h>
 #include <tf2_ros/transform_broadcaster.h>
@@ -88,7 +87,7 @@ void livox_pcl_cbk(const livox_ros_driver::CustomMsg::ConstPtr &msg){
 }*/
 
 
-void standard_pcl_cbk(const sensor_msgs::msg::PointCloud2::ConstPtr &msg){
+void standard_pcl_cbk(const sensor_msgs::msg::PointCloud2::SharedPtr msg){
 
     sensor_msgs::msg::PointCloud2::Ptr cloud(new sensor_msgs::msg::PointCloud2(*msg));
 
@@ -120,7 +119,7 @@ void standard_pcl_cbk(const sensor_msgs::msg::PointCloud2::ConstPtr &msg){
     c++;
 }
 
-void imgHandler(const sensor_msgs::msg::CompressedImage::ConstPtr &msg) {
+void imgHandler(const sensor_msgs::msg::Image::SharedPtr msg) {
     try
     {
       cv_bridge::CvImagePtr cv_ptr_compressed = cv_bridge::toCvCopy(msg,sensor_msgs::image_encodings::BGR8);
@@ -137,7 +136,7 @@ void imgHandler(const sensor_msgs::msg::CompressedImage::ConstPtr &msg) {
 
 }
 
-void imuHandler(const sensor_msgs::msg::Imu::ConstPtr &msg)
+void imuHandler(const sensor_msgs::msg::Imu::SharedPtr msg)
 {
     sensor_msgs::msg::Imu::Ptr msg_temp(new sensor_msgs::msg::Imu(*msg));
     IMUPtr imu = std::make_shared<zjloc::IMU>(
@@ -147,7 +146,7 @@ void imuHandler(const sensor_msgs::msg::Imu::ConstPtr &msg)
     lio->pushData(imu);
 }
 
-void odomHandler(const nav_msgs::msg::Odometry::ConstPtr &msg)
+void odomHandler(const nav_msgs::msg::Odometry::SharedPtr msg)
 {
     nav_msgs::msg::Odometry::Ptr msg_temp(new nav_msgs::msg::Odometry(*msg));
     OdomposPtr odom = std::make_shared<zjloc::Odompos>(
@@ -160,7 +159,7 @@ void odomHandler(const nav_msgs::msg::Odometry::ConstPtr &msg)
 }
 
 
-void updateStatus(const std_msgs::msg::Int32::ConstPtr &msg)
+void updateStatus(const std_msgs::msg::Int32::SharedPtr msg)
 {
     int type = msg->data;
     if (type == 1)
@@ -271,8 +270,8 @@ int main(int argc, char **argv)
     
     rclcpp::Publisher<nav_msgs::msg::Odometry>::SharedPtr pubLaserOdometry = 
         node->create_publisher<nav_msgs::msg::Odometry>("/icp_odom_vis", 100);
-    rclcpp::Publisher<nav_msgs::msg::Odometry>::SharedPtr pubLaserOdometryPath = 
-        node->create_publisher<nav_msgs::msg::Odometry>("/icp_odometry_path", 5);
+    rclcpp::Publisher<nav_msgs::msg::Path>::SharedPtr pubLaserOdometryPath = 
+        node->create_publisher<nav_msgs::msg::Path>("/icp_odometry_path", 5);
     rclcpp::Publisher<nav_msgs::msg::Odometry>::SharedPtr pubLaserOdometryinrobot = 
         node->create_publisher<nav_msgs::msg::Odometry>("/icp_odom", 100);
 
@@ -281,7 +280,7 @@ int main(int argc, char **argv)
         [&](std::string &topic_name, SE3 &pose, SE3 & poseinrobot, double stamp)
         {
             //static tf2_ros::TransformBroadcaster br;
-            static br = tf2_ros::TransformBroadcaster(this);
+            //static tf2_ros::TransformBroadcaster br = tf2_ros::TransformBroadcaster(this);
             tf2::Transform transform;
             Eigen::Quaterniond q_current(pose.so3().matrix());
             Eigen::Quaterniond q_currentrobot(poseinrobot.so3().matrix());
@@ -290,7 +289,14 @@ int main(int argc, char **argv)
             transform.setRotation(q);
             if (topic_name == "laser")
             {
-                br.sendTransform(tf2::StampedTransform(transform, rclcpp::Time(stamp * 1e9), "map", "base_link"));
+                /*
+                geometry_msgs::msg::TransformStamped tmp_tf_stamped;
+                tmp_tf_stamped.header.frame_id = "map";
+                tmp_tf_stamped.header.stamp = rclcpp::Time(stamp * 1e9);
+                tmp_tf_stamped.child_frame_id = "base_link";
+                tf2::impl::Converter<false, true>::convert(transform, tmp_tf_stamped.transform);
+                br.sendTransform(tmp_tf_stamped);
+                */
 
                 // publish odometry
                 nav_msgs::msg::Odometry laserOdometry;
@@ -442,19 +448,19 @@ int main(int argc, char **argv)
             laser_topic, 100, standard_pcl_cbk);
     }*/
     subLaserCloud = node->create_subscription<sensor_msgs::msg::PointCloud2>(
-        laser_topic, 100, standard_pcl_cbk);
+        laser_topic, 100, std::bind(&standard_pcl_cbk,std::placeholders::_1));
     rclcpp::Subscription<sensor_msgs::msg::Imu>::SharedPtr sub_imu_ori = node->create_subscription<sensor_msgs::msg::Imu>(
-        imu_topic, 500, imuHandler);
+        imu_topic, 500, std::bind(&imuHandler,std::placeholders::_1));
 
-    rclcpp::Subscription<nav_msgs::msg::msg::Odometry>::SharedPtr sub_odom_ori = node->create_subscription<nav_msgs::msg::msg::Odometry>(
-        odom_topic, 500, odomHandler);
+    rclcpp::Subscription<nav_msgs::msg::Odometry>::SharedPtr sub_odom_ori = node->create_subscription<nav_msgs::msg::Odometry>(
+        odom_topic, 500,std::bind(&odomHandler,std::placeholders::_1));
 
-    rclcpp::Subscription<sensor_msgs::msg::CompressedImage>::SharedPtr sub_img_ori = node->create_subscription<sensor_msgs::msg::CompressedImage>(
-        img_topic, 500, imgHandler);
+    rclcpp::Subscription<sensor_msgs::msg::Image>::SharedPtr sub_img_ori = node->create_subscription<sensor_msgs::msg::Image>(
+        img_topic, 500,std::bind(&imgHandler,std::placeholders::_1));
 
 
     std::thread measurement_process(&zjloc::lidarodom::run, lio);
-    rclcpp::spin();
+    rclcpp::spin(node);
     if(!localization_mode)
     {
         zjloc::Loop *loop;

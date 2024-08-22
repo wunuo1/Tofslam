@@ -6,4 +6,3 @@ add_library(${PROJECT_NAME}.pre
 target_link_libraries(${PROJECT_NAME}.pre
         ${third_party_libs}
         )
-

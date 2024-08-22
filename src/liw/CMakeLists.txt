@@ -14,4 +14,3 @@ target_link_libraries(${PROJECT_NAME}.liw
         ${G2O_CORE_LIBRARY}
         ${G2O_TYPES_SLAM3D}
         )
-
