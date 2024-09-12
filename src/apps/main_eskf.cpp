@@ -107,11 +107,10 @@ void standard_pcl_cbk(const sensor_msgs::msg::PointCloud2::SharedPtr msg){
             // double sample_size = 0.05;
             std::mt19937_64 g;
             std::shuffle(cloud_out.begin(), cloud_out.end(), g);
-            subSampleFrame(cloud_out, sample_size);
-            std::shuffle(cloud_out.begin(), cloud_out.end(), g);
+            // subSampleFrame(cloud_out, sample_size);
+            // std::shuffle(cloud_out.begin(), cloud_out.end(), g);
         },
                                        "laser ds");
-
         // lio->pushData(cloud_out, std::make_pair(msg->header.stamp.sec+ msg->header.stamp.nanosec * 1e-9 - convert->getTimeSpan(), convert->getTimeSpan())); //  FIXME: for staircase dataset(header timestamp is the frame end)
         // lio->pushData(cloud_out, std::make_pair(msg->header.stamp.sec+ msg->header.stamp.nanosec * 1e-9, convert->getTimeSpan())); //  normal
         lio->pushData(cloud_out, std::make_pair(msg->header.stamp.sec+ msg->header.stamp.nanosec * 1e-9, convert->getTimeSpan()), msg->header.stamp, cloud_input);
@@ -201,7 +200,7 @@ int main(int argc, char **argv)
     std::string output_path = yaml["common"]["output_path"].as<std::string>();
     std::string model_path = yaml["common"]["model_path"].as<std::string>();
     bool localization_mode = yaml["common"]["Localization_mode"].as<bool>();
-
+    float height_limit = yaml["common"]["height_limit"].as<float>();
     // std::vector<std::pair<zjloc::InteractiveKeyFrame::Ptr, Eigen::VectorXf>> db;
 
     lio = new zjloc::lidarodom();
@@ -467,13 +466,13 @@ int main(int argc, char **argv)
         // loop = new zjloc::Loop(graph);
         loop = new zjloc::Loop(graph);
         loop->loopinit(output_path);
-        lio->savemap(output_path+"/front-voxel.pcd");
+        lio->savemap(output_path+"/front-voxel.pcd", height_limit);
         loop->setAutomaticLoopCloseWindow(0);
         loop->LoopDetectionAll();
         while(loop->isrunningdetection()) {}
         graph->save_pointcloud(output_path+"/");
         lio->updatemap(loop->get_pointcloud());
-        lio->savemap(output_path+"/final-voxel.pcd");
+        lio->savemap(output_path+"/final-voxel.pcd", height_limit);
     }
     //外部回环优化
     // zjloc::Loop *loop;

@@ -115,7 +115,7 @@ namespace zjloc
           std::vector<OdometryFrame::Ptr> getkeyframes();
           void setgraph(std::shared_ptr<InteractiveGraph>& graph);
           // void setgraph(std::shared_ptr<InteractiveGraph>& graph, std::vector<std::pair<InteractiveKeyFrame::Ptr, Eigen::VectorXf>>& tmp_db);
-          bool savemap(const std::string& filename);
+          bool savemap(const std::string& filename, const float height_limit);
           void updatemap(pcl::PointCloud<pcl::PointXYZI>::Ptr pcl_points);
           
 

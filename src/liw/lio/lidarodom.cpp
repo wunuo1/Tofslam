@@ -747,8 +747,17 @@ namespace zjloc
           // Eigen::Vector3d updatet = eskf_.GetNominalState().p_;
           // SE3 pose_of_lo_ = SE3(updateq, updatet);
           SE3 pose_of_lo_ = SE3(current_state->rotation, current_state->translation);
+          pose_of_lo_.translation().z() = 0.504222312;
+          Eigen::Vector3d new_third_column(0.0, 0.0, 1.0);
+          pose_of_lo_.so3().matrix().col(2) = new_third_column;
+          pose_of_lo_.so3().matrix().col(0).normalize();  // 归一化第一列
+          pose_of_lo_.so3().matrix().col(1) = pose_of_lo_.so3().matrix().col(2).cross(pose_of_lo_.so3().matrix().col(0)); // 第二列等于第三列与第一列的叉积
+          pose_of_lo_.so3().matrix().col(1).normalize();  // 归一化第二列
+          pose_of_lo_.so3().matrix().col(0) = pose_of_lo_.so3().matrix().col(1).cross(pose_of_lo_.so3().matrix().col(2));
+          //pose_of_lo_.so3().matrix().x() = 0.0;
+          //pose_of_lo_.so3().matrix().y() = 0.0;
           Eigen::Quaterniond q_current(pose_of_lo_.so3().matrix());
-          f << std::setprecision(6) << meas.lidar_begin_rostime_.seconds() << " " <<  std::setprecision(9) << pose_of_lo_.translation().x() << " " << pose_of_lo_.translation().y() << " " << pose_of_lo_.translation().z() << " " << q_current.x() << " " << q_current.y() << " " << q_current.z() << " " << q_current.w() << endl;
+          std::cout <<"+++++++++++" <<std::setprecision(6) << meas.lidar_begin_rostime_.seconds() << " " <<  std::setprecision(9) << pose_of_lo_.translation().x() << " " << pose_of_lo_.translation().y() << " " << pose_of_lo_.translation().z() << " " << q_current.x() << " " << q_current.y() << " " << q_current.z() << " " << q_current.w() << endl;
           // Eigen::Vector3d eulerAngle2 = current_state->rotation.matrix().eulerAngles(2,1,0);
           // Eigen::Quaterniond q_current(pose_of_lo_.so3().matrix());
           // f << std::setprecision(6) << meas.lidar_begin_rostime_.seconds() << " " <<  std::setprecision(9) << pose_of_lo_.translation().x() << " " << pose_of_lo_.translation().y() << " " << pose_of_lo_.translation().z() << " " << q_current.x() << " " << q_current.y() << " " << q_current.z() << " " << q_current.w() << endl;
@@ -1851,7 +1860,7 @@ namespace zjloc
           pcl_points->points.push_back(cloudTemp);
      }
 
-     bool lidarodom::savemap(const std::string& filename)
+     bool lidarodom::savemap(const std::string& filename,const float height_limit)
      {
           std::cout<<"save map..."<<std::endl;
           pcl::PointCloud<pcl::PointXYZI>::Ptr mappcl(new pcl::PointCloud<pcl::PointXYZI>());
@@ -1860,6 +1869,7 @@ namespace zjloc
                voxelBlock vb = pair.second;
                for(int i=0;i<vb.points.size();i++)
                {
+                    if(vb.points[i].z() > height_limit) continue;
                     pcl::PointXYZI cloudTemp;
                     cloudTemp.x = vb.points[i].x();
                     cloudTemp.y = vb.points[i].y();
@@ -2281,6 +2291,10 @@ namespace zjloc
           // if (index_frame < 2) //   only first frame
           if (!init_success)
           {
+               if(img_mat.empty())
+               {
+                    return;
+               }
                std::cout<<"reloc_mode  :   hf_net   "<<endl;
                pcl::PointCloud<pcl::PointXYZI>::Ptr cur_cloud(new pcl::PointCloud<pcl::PointXYZI>());
 
@@ -2583,7 +2597,10 @@ namespace zjloc
                     img_time_buffer_.pop_front();
                     img_buffer_.pop_front();
                }
-
+               if(!meas.img_.empty())
+               {
+                    cv::resize(meas.img_, meas.img_, cv::Size(640, 480), 0, 0, cv::INTER_LINEAR);
+               }
                // meas.img_ = img_buffer_.front();
                // img_time_buffer_.pop_front();
                // img_buffer_.pop_front();

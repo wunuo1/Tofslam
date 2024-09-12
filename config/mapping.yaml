@@ -10,11 +10,15 @@ common:
   imu_topic: /imu0 #/imu_raw   /gps/gtimu
   lid_topic: /nebula200/mtof_points2 #/velodyne_points  #/points_raw  /rslidar_points /velodyne_points /livox/lidar
   odom_topic: /odom #/robot_pose_ekf/odom_combined #
-  img_topic: /image/compressed
+  img_topic: /nebula200/mtof_rgb/image_raw
   Localization_mode: False
-  output_path: /home/wunuo/slam_ws/output
+  output_path: /home/wunuo/slam_ws_2/output
   model_path: /home/wunuo/slam_ws/output/hfnet.onnx
   imuhz: 400
+  height_limit: 10
+  #height_limit: 0.8
+
+
 mapping:
   extrinsic_est_en: true
   tof2imu_extrinsic_T: [ -0.0039799203111821468, -0.027189542185995823831, -0.14001955020902342461]
@@ -112,9 +116,9 @@ odometry:
   use_ground_constraint: 0
 
 reloc:
-  mapfile: /home/wunuo/slam_ws/output/final-voxel.pcd
+  mapfile: /home/wunuo/slam_ws_2/output/final-voxel.pcd
   reloc_mode: 1 #0-scancontext 1-hfnet  2-no
-  scancontext_dbfile: /home/wunuo/slam_ws/output/ScanContext.bin
-  hfnet_dbfile: /home/wunuo/slam_ws/output/HFNet.bin
+  scancontext_dbfile: /home/wunuo/slam_ws_2/output/ScanContext.bin
+  hfnet_dbfile: /home/wunuo/slam_ws_2/output/HFNet.bin
   icp_threshold: 0.03
   save_image: False
