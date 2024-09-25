@@ -2410,8 +2410,8 @@ namespace zjloc
                std::string img_hfnet_reloc_db_path = output_path+"/img_db.png";
                std::string img_hfnet_reloc_query_path = output_path+"/img_query.png";
 
-               cv::imwrite(img_hfnet_reloc_db_path, hfNetManager->image_database[index_hfnet]);
-               cv::imwrite(img_hfnet_reloc_query_path, img_mat);
+               //cv::imwrite(img_hfnet_reloc_db_path, hfNetManager->image_database[index_hfnet]);
+               //cv::imwrite(img_hfnet_reloc_query_path, img_mat);
 
 
 

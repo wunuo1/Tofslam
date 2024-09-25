@@ -5,7 +5,10 @@ add_library(${PROJECT_NAME}.liw
         lio_utils.cpp
         lio/lidarodom.cpp
         )
-
+ament_target_dependencies(
+        ${PROJECT_NAME}.liw
+        cv_bridge
+        pcl_conversions)
 target_link_libraries(${PROJECT_NAME}.liw
         ${PROJECT_NAME}.common
         ${PROJECT_NAME}.algo

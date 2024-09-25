@@ -14,7 +14,7 @@
   <url>https:*</url>
   <author email="960732491@qq.com">chengwei</author>
   
-  <buildtool_depend>catkin</buildtool_depend>
+  <buildtool_depend>ament_cmake</buildtool_depend>
   <build_depend>geometry_msgs</build_depend>
   <build_depend>nav_msgs</build_depend>
   <build_depend>roscpp</build_depend>
@@ -46,5 +46,6 @@
 
 
   <export>
+    <build_type>ament_cmake</build_type>
   </export>
 </package>

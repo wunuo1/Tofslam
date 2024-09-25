@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.14)
 project(ct_lio)
 
 MESSAGE(STATUS "[Release Mode]")
@@ -31,10 +31,9 @@ endif()
 #                ${APPSDK_PATH}/lib/hbbpu
 #                ${APPSDK_PATH}/lib)
 
-set(CMAKE_MODULE_PATH "/home/wunuo/g2o/g2o/cmake_modules" ${CMAKE_MODULE_PATH})
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/cmake)
 
 find_package(G2O REQUIRED)
-#find_package(g2o REQUIRED)
 find_package(OpenCV REQUIRED)
 find_package(Eigen3 REQUIRED)
 find_package(ament_cmake REQUIRED)
@@ -48,38 +47,34 @@ find_package(std_msgs REQUIRED)
 find_package(tf2 REQUIRED)
 find_package(cv_bridge REQUIRED)
 find_package(image_transport REQUIRED)
-#find_package(eigen_conversions REQUIRED)
-#find_package(message_generation REQUIRED)
 find_package(Boost REQUIRED)
-#find_package(glog REQUIRED)
+find_package(pcl_conversions REQUIRED)
+find_package(tf2_ros REQUIRED)
 
-#set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} /home/wunuo/g2o/g2o/cmake_modules)
+include_directories(SYSTEM ${G2O_INCLUDE_DIR} ${G2O_INCLUDE_DIRS} /usr/include/opencv4)
 
 add_definitions(-DROOT_DIR=\"${CMAKE_CURRENT_SOURCE_DIR}/\")
 
-#target_link_libraries(main_eskf ${OpenCV_LIBS} ${Boost_LIBRARIES} glog gflags Eigen3::Eigen3 )
-
-
-ament_export_dependencies(${OpenCV_LIBS} ${Boost_LIBRARIES} glog gflags Eigen3::Eigen3 rclcpp nav_msgs cv_bridge g2o)
+ament_export_dependencies(${OpenCV_LIBS} ${Boost_LIBRARIES} glog gflags Eigen3::Eigen3 rclcpp nav_msgs cv_bridge g2o pcl_conversions tf2 tf2_ros image_transport)
 
 include_directories(
-  include
-  /opt/ros/foxy/include
+  /opt/ros/humble/include
   /usr/include/eigen3
-  /usr/include/pcl-1.10
-  /usr/include/vtk-7.1
+  /usr/include/pcl-1.12
+  /usr/include/vtk-9.1
 )
 
 include_directories(${PROJECT_SOURCE_DIR})
 include_directories(${PROJECT_SOURCE_DIR}/src)
-#include_directories(${PROJECT_SOURCE_DIR}/thirdparty/sophus)
+include_directories(${PROJECT_SOURCE_DIR}/thirdparty/sophus)
 include_directories(${PROJECT_SOURCE_DIR}/thirdparty/onnxruntime-linux-x64-1.9.0/include)
 include_directories(${PROJECT_SOURCE_DIR}/thirdparty/tessil-src/include)
 include_directories(${PROJECT_SOURCE_DIR}/thirdparty ${Boost_INCLUDE_DIRS})
 
-
-include_directories(SYSTEM ${G2O_INCLUDE_DIR} ${G2O_INCLUDE_DIRS} /usr/include/opencv4)
-
+include_directories(
+  include
+)
+link_directories(/usr/lib/x86_64-linux-gnu)
 link_directories(${PROJECT_SOURCE_DIR}/thirdparty/onnxruntime-linux-x64-1.9.0/lib)
 link_directories(${G2O_LIBRARIES})
 link_directories(${OpenCV_LIBRARY_DIRS})

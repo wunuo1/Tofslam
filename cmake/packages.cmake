@@ -94,13 +94,10 @@ set(3RDPARTY_DIR ${PROJECT_SOURCE_DIR}/../../../workspace/3rdparty)
 
 
 # find_package(G2O REQUIRED PATHS /home/zhaochengwei/workspace/3rdparty/g2o-20201223)
-set(G2O_INCLUDE_DIRS ${3RDPARTY_DIR}/g2o-20201223/include)
-set(G2O_LIBRARY_DIRS ${3RDPARTY_DIR}/g2o-20201223/lib)
 # file(GLOB G2O_LIBRARIES ${G2O_LIBRARY_DIRS}/*.a ${G2O_LIBRARY_DIRS}/*.so*)
 
 # g2o 使用thirdparty中的
 # include_directories(${PROJECT_SOURCE_DIR}/thirdparty/g2o/)
-include_directories(${G2O_INCLUDE_DIRS})
 set(g2o_libs
         ${G2O_LIBRARY_DIRS}/libg2o_stuff.so
         ${G2O_LIBRARY_DIRS}/libg2o_core.so

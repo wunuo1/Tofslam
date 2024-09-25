@@ -1,4 +1,3 @@
-
 add_library(${PROJECT_NAME}.loop
         loop_close.cpp
         graph_slam.cpp
@@ -14,6 +13,11 @@ add_library(${PROJECT_NAME}.loop
         #parameter_server.hpp
         )
 
+ament_target_dependencies(
+        ${PROJECT_NAME}.loop
+        cv_bridge
+        pcl_conversions
+)
 target_link_libraries(${PROJECT_NAME}.loop
         ${third_party_libs}
         ${G2O_TYPES_DATA}

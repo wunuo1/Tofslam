@@ -10,13 +10,13 @@ common:
   imu_topic: /imu0 #/imu_raw   /gps/gtimu
   lid_topic: /nebula200/mtof_points2 #/velodyne_points  #/points_raw  /rslidar_points /velodyne_points /livox/lidar
   odom_topic: /odom #/robot_pose_ekf/odom_combined #
-  img_topic: /nebula200/mtof_rgb/image_raw
+  img_topic: /image/compressed
   Localization_mode: False
-  output_path: /home/wunuo/slam_ws_2/output
-  model_path: /home/wunuo/slam_ws/output/hfnet.onnx
-  imuhz: 400
-  height_limit: 10
-  #height_limit: 0.8
+  output_path: /test/tof_ws/output
+  model_path: /test/tof_ws/output/hfnet.onnx
+  imuhz: 100
+  #height_limit: 10
+  height_limit: 0.6
 
 
 mapping:
