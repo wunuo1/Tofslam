@@ -3,7 +3,7 @@ add_executable(${PROJECT_NAME}_eskf main_eskf.cpp
 
 find_package(Threads REQUIRED)
 find_package(ament_cmake REQUIRED)
-
+find_package(fmt REQUIRED)
 target_link_libraries(${PROJECT_NAME}_eskf 
                          ${PROJECT_NAME}.common
                          ${PROJECT_NAME}.pre
@@ -15,6 +15,7 @@ target_link_libraries(${PROJECT_NAME}_eskf
                         ${OpenCV_LIBS}
                         yaml-cpp
                         ceres
+			fmt::fmt
                         )
 
 if(CMAKE_SYSTEM_PROCESSOR MATCHES "x86_64|i386|x86")
