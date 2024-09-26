@@ -15,9 +15,18 @@ target_link_libraries(${PROJECT_NAME}_eskf
                         ${OpenCV_LIBS}
                         yaml-cpp
                         ceres
-                        ${PROJECT_SOURCE_DIR}/thirdparty/onnxruntime-linux-x64-1.9.0/lib/libonnxruntime.so.1.9.0
                         )
-message(${PROJECT_SOURCE_DIR})
+
+if(CMAKE_SYSTEM_PROCESSOR MATCHES "x86_64|i386|x86")
+  target_link_libraries(${PROJECT_NAME}_eskf ${PROJECT_SOURCE_DIR}/thirdparty/onnxruntime-linux-x64-1.9.0/lib/libonnxruntime.so.1.9.0)
+  message(STATUS "Current system is x86 architecture.")
+elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "arm|aarch64")
+  target_link_libraries(${PROJECT_NAME}_eskf ${PROJECT_SOURCE_DIR}/thirdparty/onnxruntime-linux-aarch64-1.16.0/lib/libonnxruntime.so.1.16.0)
+  message(STATUS "Current system is arm architecture.")
+else()
+  message(STATUS "Unknown architecture: ${CMAKE_SYSTEM_PROCESSOR}")
+endif()
+
 
 
 link_directories(${G2O_LIBRARY_DIRS})
@@ -35,8 +44,17 @@ ament_target_dependencies(
 install(TARGETS ${PROJECT_NAME}_eskf
   DESTINATION lib/${PROJECT_NAME})
 
-install(FILES ${PROJECT_SOURCE_DIR}/thirdparty/onnxruntime-linux-x64-1.9.0/lib/libonnxruntime.so.1.9.0
-DESTINATION /opt/ros/humble/lib)
+if(CMAKE_SYSTEM_PROCESSOR MATCHES "x86_64|i386|x86")
+  install(FILES ${PROJECT_SOURCE_DIR}/thirdparty/onnxruntime-linux-x64-1.9.0/lib/libonnxruntime.so.1.9.0
+  DESTINATION lib)
+  message(STATUS "Current system is x86 architecture.")
+elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "arm|aarch64")
+  install(FILES ${PROJECT_SOURCE_DIR}/thirdparty/onnxruntime-linux-aarch64-1.16.0/lib/libonnxruntime.so.1.16.0
+  DESTINATION lib)
+  message(STATUS "Current system is arm architecture.")
+else()
+  message(STATUS "Unknown architecture: ${CMAKE_SYSTEM_PROCESSOR}")
+endif()
 
 install(DIRECTORY
 ${PROJECT_SOURCE_DIR}/launch/

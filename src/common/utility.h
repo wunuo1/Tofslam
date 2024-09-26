@@ -30,7 +30,7 @@ void distortFrame(std::vector<point3D> &points, Eigen::Quaterniond &q_begin, Eig
 
 void transformPoint(MotionCompensation compensation, point3D &point_temp, Eigen::Quaterniond &q_begin, Eigen::Quaterniond &q_end,
                     Eigen::Vector3d &t_begin, Eigen::Vector3d &t_end, Eigen::Matrix3d &R_imu_lidar, Eigen::Vector3d &t_imu_lidar);
-
+/*
 namespace std
 {
      template <typename T, typename... Args>
@@ -39,4 +39,5 @@ namespace std
           return std::unique_ptr<T>(new T(std::forward<Args>(args)...));
      }
 }
+*/
 #endif

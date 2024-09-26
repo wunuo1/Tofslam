@@ -1,7 +1,11 @@
 #ifndef __READ_ONNX_H__
 #define __READ_ONNX_H__
-//#define X3
-#define ONNX1_9_0
+
+#ifdef PLATFORM_X86
+    #define ONNX1_9_0
+#else
+    #define X3
+#endif
 
 #include <iostream>
 #include <string>

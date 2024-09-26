@@ -67,20 +67,27 @@ include_directories(
 include_directories(${PROJECT_SOURCE_DIR})
 include_directories(${PROJECT_SOURCE_DIR}/src)
 include_directories(${PROJECT_SOURCE_DIR}/thirdparty/sophus)
-include_directories(${PROJECT_SOURCE_DIR}/thirdparty/onnxruntime-linux-x64-1.9.0/include)
 include_directories(${PROJECT_SOURCE_DIR}/thirdparty/tessil-src/include)
 include_directories(${PROJECT_SOURCE_DIR}/thirdparty ${Boost_INCLUDE_DIRS})
 
 include_directories(
   include
 )
-link_directories(/usr/lib/x86_64-linux-gnu)
-link_directories(${PROJECT_SOURCE_DIR}/thirdparty/onnxruntime-linux-x64-1.9.0/lib)
 link_directories(${G2O_LIBRARIES})
 link_directories(${OpenCV_LIBRARY_DIRS})
 link_directories(${catkin_LIBRARY_DIRS})
 
-
+if(CMAKE_SYSTEM_PROCESSOR MATCHES "x86_64|i386|x86")
+  include_directories(${PROJECT_SOURCE_DIR}/thirdparty/onnxruntime-linux-x64-1.9.0/include)
+  link_directories(${PROJECT_SOURCE_DIR}/thirdparty/onnxruntime-linux-x64-1.9.0/lib)
+  link_directories(/usr/lib/x86_64-linux-gnu)
+  add_definitions(-DPLATFORM_X86)
+elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "arm|aarch64")
+  include_directories(${PROJECT_SOURCE_DIR}/thirdparty/onnxruntime-linux-aarch64-1.16.0/include)
+  link_directories(${PROJECT_SOURCE_DIR}/thirdparty/onnxruntime-linux-aarch64-1.16.0/lib)
+else()
+  message(STATUS "Unknown architecture: ${CMAKE_SYSTEM_PROCESSOR}")
+endif()
 
 find_library(BOOST_SERIALIZATION boost_serialization)
 if (NOT BOOST_SERIALIZATION)
