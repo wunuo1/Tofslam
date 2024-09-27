@@ -1,6 +1,6 @@
 # 功能介绍
 
-该功能包通过接收IMU、里程计、Tof摄像头的消息，进行建图与定位
+该功能包通过接收IMU、里程计、Tof摄像头的消息，进行三维建图与定位
 
 # 使用方法
 
@@ -18,7 +18,7 @@
 #安装依赖的功能包
 sudo apt -y tros-hobot-nav2 libsuitesparse-dev libblas-dev liblapack-dev libeigen3-dev libopencv-dev libspdlog-dev libconsole-bridge-dev libpcl-dev libgoogle-glog-dev libtf2-dev  ros-humble-cv-bridge  ros-humble-nav-msgs ros-humble-image-transport ros-humble-tf2-ros ros-humble-pcl-conversions ros-humble-navigation2 libceres-dev
 
-#编译g2o功能包（功能包见文末网盘）
+#编译g2o功能包（功能包见文末附件）
 cd g2o
 mkdir build && cd build
 cmake ..
@@ -126,3 +126,7 @@ reloc:
   hfnet_dbfile: /home/slam_ws_2/output/HFNet.bin #特征点检测模型路径
   icp_threshold: 0.03
 ```
+
+# 附件
+链接：https://pan.baidu.com/s/1X9yl6DHWfIAQs56kpdRpWA?pwd=ukw7 
+提取码：ukw7
