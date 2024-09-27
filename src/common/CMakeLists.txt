@@ -13,3 +13,6 @@ ament_target_dependencies(
 target_link_libraries(${PROJECT_NAME}.common
         ${third_party_libs}
         )
+if(CMAKE_SYSTEM_PROCESSOR MATCHES "arm|aarch64")
+        target_link_libraries(${PROJECT_NAME}.common /usr/lib/libdnn.so)
+endif()
